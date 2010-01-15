@@ -1,0 +1,13 @@
+==============================================================
+ Text Classification API
+ Copyright 2009 DigitalPebble Ltd
+==============================================================
+
+This product includes software developed by DigitalPebble Ltd (http://www.digitalpebble.com/).
+
+This product includes software developed by the LIBSVM Project.
+  Taiwan University (http://www.csie.ntu.edu.tw/~cjlin/libsvm/).
+  Copyright (c) 2000-2006 Chih-Chung Chang and Chih-Jen Lin
+
+This product includers software from http://www.bwaldvogel.de/liblinear-java/
+

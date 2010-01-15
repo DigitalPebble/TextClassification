@@ -1,0 +1,15 @@
+1.4
+- added XMLCorpusReader and XMLCorpusClassifier which generate a raw file from a XML corpus or classify a XML corpus using an existing model
+- added java implementation of liblinear
+- added toString() method on Fields
+- bugfix : tokenforms excessively normalised in class Lexicon - was losing non european characters
+- TextClassifier can take unzip working directory to /tmp before using it for classifying
+1.3
+- added CorpusUtils class for generating vector file from raw file, generate subset of raw file, filter fields from raw file, display best attributes
+- Bug fix : Lexicon differenciates between attribute number and highest attribute ID
+- added object attributescorer and refactored logLikelihoodAttributeFilter to return a Scorer object. This Scorer is to filter a lexicon
+- normalise attribute forms to prevent \n or \t in lexicon file
+1.2
+- made setlogLikelihoodratio() and keepTopNAttributesLLR() public
+- uses Enums for Parameters.WeightingMethods instead of list of static ints
+- Parameters.WeightingMethods  toString / methodFromString throw RunTimeException if value is not known

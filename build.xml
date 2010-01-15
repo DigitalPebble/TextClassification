@@ -1,0 +1,104 @@
+<?xml version="1.0"?>
+
+<project name="textclassification" default="all" basedir=".">
+   <description> </description>
+	<!-- *******************************************************************
+       ****************  USER OPTIONS ************************************
+       *******************************************************************
+       Make changes to this section of the build file to customise your
+       test and build script -->
+	  <!-- Allow overriding of properties via build.properties -->
+	  <property file="build.properties" />
+
+	  <!-- Documentation directory -->
+  	  <property name="docDir"  location="doc"/>
+	
+	<property name="jarFile" value="textclassification-${version}.jar"/>
+
+ 	  <fileset id="lib" dir="lib">
+ 	    <include name="*.jar"/>
+	  </fileset>
+         
+	  <path id="compile.classpath">
+           <fileset refid="lib"/>  
+	  </path>
+	
+	<!-- RUNTIME MEMORY -->
+	<property name="run.memory" value="200M" />
+
+	<!-- *******************************************************************
+       ****************  USER OPTIONS END HERE! **************************
+       ******************************************************************* -->
+
+	<!-- set global properties for this build -->
+
+	<!-- Directories -->
+
+	<!-- Sources -->
+	<property name="srcDir" location="src" />
+
+	<!-- Output directory for the build process -->
+	<property name="buildDir" location="build" />
+
+	<!-- Use the new 1.3+ compiler -->
+	<property name="build.compiler" value="modern" />
+
+	  <!-- create build directory structure -->
+	  <target name="prepare">
+		<mkdir dir="${buildDir}"/>
+	  </target>
+
+	<!-- Make documentation -->
+  	<target name="javadoc">
+   	 <javadoc access="protected" 
+              destdir="${docDir}/javadoc"
+              classpathref="compile.classpath"
+              Encoding="UTF-8"
+              Use="yes"
+              Windowtitle="TextClassification JavaDoc"
+              link="http://java.sun.com/j2se/1.5.0/docs/api/"
+              docencoding="UTF-8"
+              charset="UTF-8"
+              source="1.5"
+              useexternalfile="yes"
+              breakiterator="true">
+      	<fileset dir="${srcDir}"/>        
+    	</javadoc>
+  	</target>
+          
+	<!-- Clear all build output -->
+	<target name="clean">
+		<delete dir="${buildDir}" />
+		<delete dir="${docDir}" />
+                <delete file="textclassification.jar" />
+	</target>
+
+   	 <target name="copy.resources" depends="prepare"
+    	    description="copy non-.java files from src to build" >
+  	  <copy todir="${buildDir}" includeEmptyDirs="true">
+ 	     <fileset dir="${srcDir}" excludes="**/*.java" />
+	    </copy>
+	</target>
+
+          
+	<!-- This target compiles all the classes including debug information
+	-->
+	<target name="compile" description="compile the source "
+	depends="prepare">
+		<!-- Compile the java code from ${srcDir} into ${buildDir} -->
+		<javac classpathref="compile.classpath" srcdir="${srcDir}" destdir="${buildDir}" encoding="UTF-8"
+		source="1.5" target="1.5" debug="true" />
+	</target>
+
+       <target name="jar" depends="compile,copy.resources">
+	<jar destfile="${jarFile}" update="false" index="true">
+                <fileset dir="${buildDir}/"/>
+	</jar>
+	</target>
+        
+	<!-- Everything! -->
+	<target name="all" depends="clean,jar">
+	</target>
+</project>
+
+

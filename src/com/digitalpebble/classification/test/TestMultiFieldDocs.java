@@ -16,48 +16,13 @@
 
 package com.digitalpebble.classification.test;
 
-import java.io.File;
-
-import junit.framework.TestCase;
-
 import com.digitalpebble.classification.Document;
 import com.digitalpebble.classification.Field;
-import com.digitalpebble.classification.Learner;
 import com.digitalpebble.classification.Parameters;
 import com.digitalpebble.classification.RAMTrainingCorpus;
 import com.digitalpebble.classification.TextClassifier;
 
-public class MultiFieldDocs extends TestCase {
-
-	Learner learner;
-	File tempFile;
-
-	protected void setUp() throws Exception {
-		super.setUp();
-		File tempFile2 = java.io.File.createTempFile("TextClassifier", "");
-		tempFile2.delete();
-		tempFile = new File(tempFile2.getParentFile(),"TextClassifierDir");
-		tempFile.mkdir();
-		learner = Learner.getLearner(tempFile.getAbsolutePath(),
-				Learner.LibSVMModelCreator, true);
-	}
-
-	protected void tearDown() throws Exception {
-		super.tearDown();
-		removeDirectory(tempFile);
-		learner = null;
-	}
-	
-	private static void removeDirectory(File directory) {
-	    if(directory.isDirectory() == false) return;
-	    File[] content = directory.listFiles();
-	    for(int i = 0; i < content.length; i++) {
-	      if(content[i].isDirectory())
-	        removeDirectory(content[i]);
-	      else content[i].delete();
-	    }
-	    directory.delete();
-	  }
+public class TestMultiFieldDocs extends AbstractLearnerTest {
 
 	public void testMultiField() throws Exception {
 		Field[] fields = new Field[3];

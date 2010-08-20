@@ -20,14 +20,22 @@ public class Field {
 
 	String _name = null;
 	String[] _content = null;
-	
-	public Field(String name, String[] content){
-		_name=name;
-		_content=content;
-	}	
-	
-	public String toString(){
-	  return _name+" : "+_content.length+" tokens";
+
+	public String getName() {
+		return _name;
 	}
-	
+
+	public Field(String name, String[] content) {
+		_name = name;
+		_content = content;
+	}
+
+	public String[] getContent() {
+		return _content;
+	}
+
+	public String toString() {
+		return _name + " : " + _content.length + " tokens";
+	}
+
 }

@@ -29,6 +29,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.digitalpebble.classification.Parameters.WeightingMethod;
 import com.digitalpebble.classification.util.AttributeScorer;
@@ -247,8 +249,9 @@ public class Lexicon {
 		}
 		int loaded = 0;
 		int highestID = 0;
+		Pattern tab = Pattern.compile("\t");
 		while ((line = reader.readLine()) != null) {
-			String[] content_pos = line.split("\t");
+		  String[] content_pos = tab.split(line);
 			int index = Integer.parseInt(content_pos[1]);
 			if (index > highestID)
 				highestID = index;

@@ -32,7 +32,7 @@ public class TestWeightingSchemes extends AbstractLearnerTest {
 		buildRefForBooleanMetric();
 		buildRefForOccMetric();
 		buildRefForFreqMetric();
-		// TODO build ref for tf-idf
+		buildRefForTFIDFMetric();
 	}
 
 	private static void buildRefForFreqMetric() {
@@ -115,6 +115,37 @@ public class TestWeightingSchemes extends AbstractLearnerTest {
 		occu3.put("f", 1.0);
 	}
 
+	private static void buildRefForTFIDFMetric() {
+		List<Map> expectedList = new ArrayList<Map>();
+
+		double[] idfs = new double[] { Math.log(1f), Math.log(1f),
+				Math.log(1f), Math.log(3f), Math.log(3f),
+				Math.log(3f) };
+
+		references.put(Parameters.WeightingMethod.TFIDF, expectedList);
+
+		HashMap<String, Double> freq1 = new HashMap<String, Double>();
+		expectedList.add(freq1);
+		freq1.put("a", 0.4d * idfs[0]);
+		freq1.put("b", 0.2d * idfs[1]);
+		freq1.put("c", 0.2d * idfs[2]);
+		freq1.put("d", 0.2d * idfs[3]);
+
+		HashMap<String, Double> freq2 = new HashMap<String, Double>();
+		expectedList.add(freq2);
+		freq2.put("a", 0.2d * idfs[0]);
+		freq2.put("b", 0.4d * idfs[1]);
+		freq2.put("c", 0.2d * idfs[2]);
+		freq2.put("e", 0.2d * idfs[4]);
+
+		HashMap<String, Double> freq3 = new HashMap<String, Double>();
+		expectedList.add(freq3);
+		freq3.put("a", 0.25d * idfs[0]);
+		freq3.put("b", 0.25d * idfs[1]);
+		freq3.put("c", 0.25d * idfs[2]);
+		freq3.put("f", 0.25d * idfs[5]);
+	}
+
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -135,6 +166,10 @@ public class TestWeightingSchemes extends AbstractLearnerTest {
 
 	public void testFrequencyWeightingSchemes() {
 		evaluateWeightingSchemes(Parameters.WeightingMethod.FREQUENCY);
+	}
+	
+	public void testTFIDFWeightingSchemes() {
+		evaluateWeightingSchemes(Parameters.WeightingMethod.TFIDF);
 	}
 
 	private void evaluateWeightingSchemes(WeightingMethod method) {
@@ -175,7 +210,7 @@ public class TestWeightingSchemes extends AbstractLearnerTest {
 				// retrieve the corresponding entry in the lexicon
 				String label = invertedIndex.get(indices[i]);
 				double expected = ref.get(label);
-				assertEquals(expected, values[i]);
+				assertEquals("label: "+label,expected, values[i]);
 			}
 		}
 	}

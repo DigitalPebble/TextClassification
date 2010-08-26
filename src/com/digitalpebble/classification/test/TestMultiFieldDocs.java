@@ -16,43 +16,53 @@
 
 package com.digitalpebble.classification.test;
 
+import java.util.Map;
+
 import com.digitalpebble.classification.Document;
 import com.digitalpebble.classification.Field;
 import com.digitalpebble.classification.Parameters;
 import com.digitalpebble.classification.RAMTrainingCorpus;
 import com.digitalpebble.classification.TextClassifier;
+import com.digitalpebble.classification.Vector;
 
 public class TestMultiFieldDocs extends AbstractLearnerTest {
 
 	public void testMultiField() throws Exception {
 		Field[] fields = new Field[3];
-		fields[0] = new Field("title", new String[]{"This","is","a","title"});		
-		fields[1] = new Field("abstract", new String[]{"abstract"});
-		fields[2] = new Field("content", new String[]{"This","is","the","content","this","will","have","a","large","value"});	
+		fields[0] = new Field("title", new String[] { "This", "is", "a",
+				"title" });
+		fields[1] = new Field("abstract", new String[] { "abstract" });
+		fields[2] = new Field("content", new String[] { "This", "is", "the",
+				"content", "this", "will", "have", "a", "large", "value" });
 		learner.setMethod(Parameters.WeightingMethod.TFIDF);
 		Document doc = learner.createDocument(fields, "large");
-		
+
 		Field[] fields2 = new Field[2];
-		fields2[0] = new Field("title", new String[]{"This","is","not","a","title"});		
+		fields2[0] = new Field("title", new String[] { "This", "is", "not",
+				"a", "title" });
 		// fields2[1] = new Field("abstract", new String[]{"abstract"});
-		fields2[1] = new Field("content", new String[]{"This","is","the","content","this","will","have","a","small","value"});	
+		fields2[1] = new Field("content", new String[] { "This", "is", "the",
+				"content", "this", "will", "have", "a", "small", "value" });
 		learner.setMethod(Parameters.WeightingMethod.TFIDF);
 		Document doc2 = learner.createDocument(fields2, "small");
-		
+
 		// try putting the same field several times
 		Field[] fields3 = new Field[3];
-		fields3[0] = new Field("title", new String[]{"This","is","not","a","title"});		
+		fields3[0] = new Field("title", new String[] { "This", "is", "not",
+				"a", "title" });
 		// fields2[1] = new Field("abstract", new String[]{"abstract"});
-		fields3[1] = new Field("content", new String[]{"This","is","the","content","this","will","have","a","small","value"});	
-		fields3[2] = new Field("title", new String[]{"some","different","content"});	
+		fields3[1] = new Field("content", new String[] { "This", "is", "the",
+				"content", "this", "will", "have", "a", "small", "value" });
+		fields3[2] = new Field("title", new String[] { "some", "different",
+				"content" });
 		learner.setMethod(Parameters.WeightingMethod.TFIDF);
 		Document doc3 = learner.createDocument(fields3, "small");
-		
+
 		RAMTrainingCorpus corpus = new RAMTrainingCorpus();
 		corpus.add(doc);
 		corpus.add(doc2);
 		learner.learn(corpus);
-		
+
 		TextClassifier classi = TextClassifier.getClassifier(tempFile);
 		double[] scores = classi.classify(doc);
 		assertEquals("large", classi.getBestLabel(scores));
@@ -60,6 +70,29 @@ public class TestMultiFieldDocs extends AbstractLearnerTest {
 		assertEquals("small", classi.getBestLabel(scores));
 		scores = classi.classify(doc3);
 		assertEquals("small", classi.getBestLabel(scores));
+	}
+
+	public void testCustomWeightingScheme() throws Exception {
+		Field[] fields = new Field[1];
+		fields[0] = new Field("keywords", new String[] { "test","keywords"});
+		learner.setMethod(Parameters.WeightingMethod.FREQUENCY);
+		learner.getLexicon().setMethod(Parameters.WeightingMethod.BOOLEAN, "keywords");
+		Document doc = learner.createDocument(fields, "large");
+		Vector vector = doc.getFeatureVector(learner.getLexicon());
+		
+		// check that the values for the field keywords are boolean
+		int[] indices = vector.getIndices();
+		double[] values = vector.getValues();
+		
+		Map<Integer, String> invertedIndex = learner.getLexicon()
+		.getInvertedIndex();
+		
+		for (int i = 0; i < indices.length; i++) {
+			// retrieve the corresponding entry in the lexicon
+			String label = invertedIndex.get(indices[i]);
+			double expected = 1.0;
+			assertEquals("label: "+label,expected, values[i]);
+		}
 	}
 
 }

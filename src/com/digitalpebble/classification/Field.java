@@ -16,6 +16,8 @@
 
 package com.digitalpebble.classification;
 
+/** Field name and its content **/
+
 public class Field {
 
 	String _name = null;

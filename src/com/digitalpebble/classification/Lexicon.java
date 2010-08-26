@@ -66,6 +66,9 @@ public class Lexicon {
 	/** list of fields used by a corpus * */
 	private Map<String, Integer> fields = new HashMap<String, Integer>();
 
+	/** Custom weighting schemes for fields **/
+	private Map<String, WeightingMethod> customWeights = new HashMap<String, WeightingMethod>();
+
 	private int lastFieldId = -1;
 
 	private AttributeScorer filter;
@@ -83,12 +86,38 @@ public class Lexicon {
 		this.loadFromFile(file);
 	}
 
+	/**
+	 * Returns the weighting scheme used for a specific field or the default one
+	 * if nothing has been specified for it
+	 **/
+	public WeightingMethod getMethod(String fieldName) {
+		WeightingMethod method = this.customWeights.get(fieldName);
+		if (method != null)
+			return method;
+		return this.method_used;
+	}
+
+	/** Returns the default weighting scheme **/
 	public WeightingMethod getMethod() {
 		return this.method_used;
 	}
 
+	/** Sets the default weighting scheme **/
 	public void setMethod(WeightingMethod method) {
 		this.method_used = method;
+	}
+
+	/** Sets the weighting scheme for a specific field **/
+	public void setMethod(WeightingMethod method, String fieldName) {
+		WeightingMethod existingmethod = this.customWeights.get(fieldName);
+		if (existingmethod == null) {
+			this.customWeights.put(fieldName, method);
+			return;
+		}
+		// already one specified : check that it is the same as the one we have
+		if (!method.equals(existingmethod))
+			throw new RuntimeException("Already set weight of field "
+					+ fieldName + " to " + existingmethod.toString());
 	}
 
 	public int getDocNum() {
@@ -214,7 +243,7 @@ public class Lexicon {
 
 	// creates an entry for the token
 	// called from Document
-	public int createIndex(String tokenForm) {		
+	public int createIndex(String tokenForm) {
 		int[] index = (int[]) tokenForm2index.get(tokenForm);
 		if (index == null) {
 			index = new int[] { nextAttributeID };
@@ -245,13 +274,21 @@ public class Lexicon {
 		this.labels = Arrays.asList(reader.readLine().split(" "));
 		String[] tmp = reader.readLine().split(" ");
 		for (String f : tmp) {
-			getFieldID(f, true);
+			// see if there is a custom weight for it
+			String[] fieldTokens = f.split(":");
+			String field_name = fieldTokens[0];
+			if (fieldTokens.length > 1) {
+				WeightingMethod method = Parameters.WeightingMethod
+						.methodFromString(fieldTokens[1]);
+				customWeights.put(field_name, method);
+			}
+			getFieldID(field_name, true);
 		}
 		int loaded = 0;
 		int highestID = 0;
 		Pattern tab = Pattern.compile("\t");
 		while ((line = reader.readLine()) != null) {
-		  String[] content_pos = tab.split(line);
+			String[] content_pos = tab.split(line);
 			int index = Integer.parseInt(content_pos[1]);
 			if (index > highestID)
 				highestID = index;
@@ -284,11 +321,16 @@ public class Lexicon {
 			writer.write((String) labelIters.next() + " ");
 		}
 		writer.write("\n");
-		// save the field names (if available)
+		// save the field names (possibly with non default scheme)
 		for (String fname : this.getFields()) {
-			writer.write(fname + " ");
+			writer.write(fname);
+			WeightingMethod method = customWeights.get(fname);
+			if (method != null)
+				writer.write(":" + method.name());
+			writer.write(" ");
 		}
 		writer.write("\n");
+
 		// dump all token_forms one by one
 		while (forms.hasNext()) {
 			String key = (String) forms.next();

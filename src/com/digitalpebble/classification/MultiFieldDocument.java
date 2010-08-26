@@ -19,6 +19,8 @@ package com.digitalpebble.classification;
 import java.util.Iterator;
 import java.util.TreeMap;
 
+import com.digitalpebble.classification.Parameters.WeightingMethod;
+
 public class MultiFieldDocument implements Document {
   int label = 0;
   
@@ -227,8 +229,8 @@ public class MultiFieldDocument implements Document {
       if (indices[pos] == Integer.MAX_VALUE) {
         break;
       }
-      if (lexicon.getDocFreq(indices[pos]) <= 0) continue;
-      double score = getScore(pos, lexicon, method, numDocs);
+      if (lexicon.getDocFreq(indices[pos]) <= 0) continue;     
+      double score = getScore(pos, lexicon, numDocs);
       // removed in meantime?
       if (score == 0) continue;
       copyvalues[pos] = score;
@@ -246,14 +248,21 @@ public class MultiFieldDocument implements Document {
     return new Vector(trimmedindices, trimmedvalues);
   }
   
-  private double getScore(int pos, Lexicon lexicon,
-      Parameters.WeightingMethod method, double numdocs) {
+  /** 
+   * Returns the score of an attribute given the weighting scheme
+   * specified in the lexicon or for a specific field 
+   **/
+  private double getScore(int pos, Lexicon lexicon, double numdocs) {
     double score = 0;
     int indexTerm = this.indices[pos];
     double occurences = (double) this.freqs[pos];
     
     int fieldNum = this.indexToField[pos];
     double frequency = occurences / tokensPerField[fieldNum];
+    
+    // is there a custom weight for this field?
+    String fieldName = lexicon.getFields()[fieldNum];
+    WeightingMethod method = lexicon.getMethod(fieldName);
     
     if (method.equals(Parameters.WeightingMethod.BOOLEAN)) {
       score = 1;

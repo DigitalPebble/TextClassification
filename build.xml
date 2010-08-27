@@ -35,7 +35,7 @@
 	<!-- Directories -->
 
 	<!-- Sources -->
-	<property name="srcDir" location="src" />
+	<property name="srcDir" location="src/java" />
 
 	<!-- Output directory for the build process -->
 	<property name="buildDir" location="build" />

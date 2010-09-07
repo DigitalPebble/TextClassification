@@ -14,7 +14,7 @@
  * the License.
  */
 
-package com.digitalpebble.classification.util;
+package com.digitalpebble.classification.util.scorers;
 
 import java.util.Iterator;
 import java.util.Map;

@@ -32,7 +32,7 @@ import java.util.TreeMap;
 import java.util.regex.Pattern;
 
 import com.digitalpebble.classification.Parameters.WeightingMethod;
-import com.digitalpebble.classification.util.AttributeScorer;
+import com.digitalpebble.classification.util.scorers.AttributeScorer;
 
 /**
  * A lexicon contains all the information about the tokens used during learning

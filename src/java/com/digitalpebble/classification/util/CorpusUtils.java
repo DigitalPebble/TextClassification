@@ -36,6 +36,8 @@ import com.digitalpebble.classification.Lexicon;
 import com.digitalpebble.classification.MultiFieldDocument;
 import com.digitalpebble.classification.Parameters.WeightingMethod;
 import com.digitalpebble.classification.libsvm.Utils;
+import com.digitalpebble.classification.util.scorers.AttributeScorer;
+import com.digitalpebble.classification.util.scorers.logLikelihoodAttributeScorer;
 
 public class CorpusUtils {
 

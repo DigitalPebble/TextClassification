@@ -22,8 +22,8 @@ import java.util.List;
 
 import com.digitalpebble.classification.liblinear.LibLinearModelCreator;
 import com.digitalpebble.classification.libsvm.LibSVMModelCreator;
-import com.digitalpebble.classification.util.AttributeScorer;
-import com.digitalpebble.classification.util.logLikelihoodAttributeScorer;
+import com.digitalpebble.classification.util.scorers.AttributeScorer;
+import com.digitalpebble.classification.util.scorers.logLikelihoodAttributeScorer;
 
 public abstract class Learner {
 	protected Lexicon lexicon;

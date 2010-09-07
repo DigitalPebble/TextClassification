@@ -1,6 +1,6 @@
 ==============================================================
  Text Classification API
- Copyright 2009 DigitalPebble Ltd
+ Copyright 2010 DigitalPebble Ltd
 ==============================================================
 
 This product includes software developed by DigitalPebble Ltd (http://www.digitalpebble.com/).

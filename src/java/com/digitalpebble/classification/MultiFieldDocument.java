@@ -56,12 +56,12 @@ public class MultiFieldDocument implements Document {
       // field does not exist
       if (fieldNum == -1) continue;
       
-      for (int token = 0; token < f._content.length; token++) {
+      for (int token = 0; token < f._tokens.length; token++) {
         // remove null strings or empty strings
-        if (f._content[token] == null) continue;
-        if (f._content[token].length() < 1) continue;
+        if (f._tokens[token] == null) continue;
+        if (f._tokens[token].length() < 1) continue;
         
-        String normToken = simpleNormalisationTokenString(f._content[token]);
+        String normToken = simpleNormalisationTokenString(f._tokens[token]);
         
         // add a new instance to the count
         tokensPerField[fieldNum]++;

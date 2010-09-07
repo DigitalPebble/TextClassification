@@ -3,7 +3,6 @@ package com.digitalpebble.classification.liblinear;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import liblinear.FeatureNode;
 import liblinear.Linear;

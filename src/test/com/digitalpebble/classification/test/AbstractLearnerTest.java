@@ -2,9 +2,9 @@ package com.digitalpebble.classification.test;
 
 import java.io.File;
 
-import com.digitalpebble.classification.Learner;
-
 import junit.framework.TestCase;
+
+import com.digitalpebble.classification.Learner;
 
 public abstract class AbstractLearnerTest extends TestCase {
 

@@ -17,14 +17,12 @@
 package com.digitalpebble.classification.libsvm;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 import libsvm.svm;
 import libsvm.svm_model;
 import libsvm.svm_node;
 
 import com.digitalpebble.classification.Document;
-import com.digitalpebble.classification.Lexicon;
 import com.digitalpebble.classification.Parameters;
 import com.digitalpebble.classification.TextClassifier;
 import com.digitalpebble.classification.Vector;

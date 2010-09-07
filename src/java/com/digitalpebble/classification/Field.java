@@ -16,28 +16,35 @@
 
 package com.digitalpebble.classification;
 
+import java.util.List;
+
 /** Field name and its content **/
 
 public class Field {
 
 	String _name = null;
-	String[] _content = null;
+	String[] _tokens = null;
 
 	public String getName() {
 		return _name;
 	}
 
-	public Field(String name, String[] content) {
+	public Field(String name, List<String> tokens) {
 		_name = name;
-		_content = content;
+		_tokens = (String[]) tokens.toArray(new String[tokens.size()]);
 	}
 
-	public String[] getContent() {
-		return _content;
+	public Field(String name, String[] tokens) {
+		_name = name;
+		_tokens = tokens;
+	}
+
+	public String[] getTokens() {
+		return _tokens;
 	}
 
 	public String toString() {
-		return _name + " : " + _content.length + " tokens";
+		return _name + " : " + _tokens.length + " tokens";
 	}
 
 }

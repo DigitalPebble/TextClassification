@@ -19,7 +19,10 @@ package com.digitalpebble.classification.util;
 import java.util.Iterator;
 import java.util.Map;
 
-import com.digitalpebble.classification.*;
+import com.digitalpebble.classification.Document;
+import com.digitalpebble.classification.Lexicon;
+import com.digitalpebble.classification.TrainingCorpus;
+import com.digitalpebble.classification.Vector;
 
 /** 
  * Computes the log likelihood score for all 

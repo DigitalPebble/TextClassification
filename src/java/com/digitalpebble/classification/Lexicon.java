@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
 
@@ -83,6 +84,38 @@ public class Lexicon {
 	public Lexicon(String file) throws IOException {
 		this();
 		this.loadFromFile(file);
+	}
+
+	/**
+	 * Adjust the indices of the attributes so that maxAttributeID ==
+	 * getAttributesNum. Returns a Map containing the mapping between the old
+	 * indices and the new ones.
+	 **/
+	public Map<Integer, Integer> compact() {
+		Map<Integer, Integer> equiv = new HashMap<Integer, Integer>();
+
+		TreeMap<Integer, int[]> newIndex2docfreq = new TreeMap<Integer, int[]>();
+
+		// iterate on the map token -> Id and change the latter
+		Iterator<Entry<String, int[]>> iter = tokenForm2index.entrySet().iterator();
+		nextAttributeID = 1;
+		while (iter.hasNext()) {
+			Entry<String, int[]> entry = iter.next();
+			int oldIndex = entry.getValue()[0];
+			int newIndex = nextAttributeID;
+			entry.setValue(new int[] { newIndex });
+			// store the equivalence in the map
+			equiv.put(oldIndex, newIndex);
+			// populate the doc freq
+			int[] docFreq = index2docfreq.get(oldIndex);
+			newIndex2docfreq.put(newIndex, docFreq);
+			nextAttributeID++;
+		}
+
+		// swap the doc freq
+		index2docfreq = newIndex2docfreq;
+
+		return equiv;
 	}
 
 	/**
@@ -410,12 +443,12 @@ public class Lexicon {
 		this.classifierType = classifierType;
 	}
 
+	/** Returns the number of attributes present in the lexicon **/
 	public int getAttributesNum() {
 		return tokenForm2index.size();
-		// return nextTokenPosition;
 	}
 
-	// returns the largest ID used for an attribute
+	/** Returns the largest ID used for an attribute **/
 	public int maxAttributeID() {
 		return nextAttributeID - 1;
 	}

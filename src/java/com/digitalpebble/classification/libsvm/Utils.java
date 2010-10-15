@@ -22,6 +22,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Iterator;
+import java.util.Map;
 
 import com.digitalpebble.classification.Document;
 import com.digitalpebble.classification.Lexicon;
@@ -78,6 +79,12 @@ public class Utils {
 
 	public static File writeExamples(TrainingCorpus corpus, Lexicon lexicon,
 			boolean b, String vector_location) throws IOException {
+		return  writeExamples(corpus, lexicon,
+				b, vector_location, null);
+	}
+	
+	public static File writeExamples(TrainingCorpus corpus, Lexicon lexicon,
+			boolean b, String vector_location, Map <Integer,Integer> attributeMapping) throws IOException {
 		File vectorFile = new File(vector_location);
 		PrintWriter out = null;
 		out = new PrintWriter(new FileWriter(vectorFile));
@@ -91,7 +98,9 @@ public class Utils {
 			// need a metric (e.g. relative frequency / binary)
 			// and a lexicon
 			// the vector is represented as a string directly
-			Vector vector = doc.getFeatureVector(lexicon);
+			Vector vector = null;
+			if (attributeMapping==null)  vector = doc.getFeatureVector(lexicon);
+			else vector = doc.getFeatureVector(lexicon,attributeMapping);
 			out.print(label + " " + Utils.getVectorString(vector) + "\n");
 		}
 		out.close();

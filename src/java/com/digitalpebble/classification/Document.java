@@ -16,6 +16,8 @@
 
 package com.digitalpebble.classification;
 
+import java.util.Map;
+
 public interface Document {
 
   /**
@@ -33,6 +35,11 @@ public interface Document {
 
   public abstract Vector getFeatureVector(Lexicon lexicon,
       Parameters.WeightingMethod method);
+  
+  /** 
+   * Same as above but gives a mapping for the attributes numbers
+   **/
+  public abstract Vector getFeatureVector(Lexicon lexicon, Map<Integer, Integer> equiv);
 
   /**
    * Returns a String that can be used to serialize to/from a file

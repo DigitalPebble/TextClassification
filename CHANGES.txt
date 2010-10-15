@@ -1,6 +1,7 @@
 1.4.1-SNAPSHOT
 - can specify weighting schemes per field
 - added TestWeightingSchemes
+- can remap the attribute numbers before generating the vector file
 1.4
 - added XMLCorpusReader and XMLCorpusClassifier which generate a raw file from a XML corpus or classify a XML corpus using an existing model
 - added java implementation of liblinear

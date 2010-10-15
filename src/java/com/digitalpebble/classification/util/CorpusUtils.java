@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.BitSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
 
@@ -56,7 +57,8 @@ public class CorpusUtils {
 		writer.close();
 	}
 
-	public static void dumpBestAttributes(String raw, String lexiconF) throws IOException {
+	public static void dumpBestAttributes(String raw, String lexiconF)
+			throws IOException {
 		// load the corpus + the lexicon
 		// load the lexicon and the raw file
 		Lexicon lexicon = new Lexicon(lexiconF);
@@ -79,6 +81,8 @@ public class CorpusUtils {
 
 		String vector_location = props.getProperty("vector_location");
 		String newLexicon = props.getProperty("new_lexicon_file");
+		
+		boolean compact = "true".equals(props.getProperty("compact.attribute.nums"));
 
 		// load the lexicon and the raw file
 		Lexicon lexicon = new Lexicon(lexiconF);
@@ -113,13 +117,35 @@ public class CorpusUtils {
 			lexicon.pruneTermsDocFreq(minFreq, maxFreq);
 		}
 
+		// change the indices of the attributes to remove 
+		// gaps between them
+		Map<Integer, Integer> equiv = null;
+		if (compact){
+			// create a new Lexicon object
+			equiv = lexicon.compact();
+		}
+
 		// save the modified lexicon file
 		if (newLexicon != null)
 			lexicon.saveToFile(newLexicon);
 
 		// dump a new vector file
-		Utils.writeExamples(ftc, lexicon, true, vector_location);
+		Utils.writeExamples(ftc, lexicon, true, vector_location,equiv);
 	}
+
+	/**
+	 * Generates a random sample of lines from an input file and stores the
+	 * selection in a file named like the original but with the suffix
+	 * "_"+number of lines.
+	 * 
+	 * @param input
+	 *            = input file
+	 * @param expected_number
+	 *            = number of lines to generate
+	 * @param noTest
+	 *            = indicates whether the lines which haven't been selected must
+	 *            be kept in a separate file e.g. for testing
+	 **/
 
 	public static void randomSelection(File input, int expected_number,
 			boolean noTest) throws IOException {
@@ -186,14 +212,11 @@ public class CorpusUtils {
 		if (args.length < 2) {
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("CorpusUtil : \n");
-			buffer
-					.append("\t -filterFields existingRawFile newRawFile [field number]+ \n");
-			buffer
-					.append("\t -generateVector rawFile lexicon parameter_file\n");
-			buffer
-					.append("\t -randomSelection rawFile expected_num_lines [-noTest]\n");
-			buffer
-					.append("\t -bestAttributes rawFile lexicon\n");
+			buffer.append("\t -compactAttributes existingRawFile newRawFile lexiconFile newLexiconFile\n");
+			buffer.append("\t -filterFields existingRawFile newRawFile [field number]+ \n");
+			buffer.append("\t -generateVector rawFile lexicon parameter_file\n");
+			buffer.append("\t -randomSelection rawFile expected_num_lines [-noTest]\n");
+			buffer.append("\t -bestAttributes rawFile lexicon\n");
 			System.out.println(buffer.toString());
 			return;
 		}
@@ -208,7 +231,7 @@ public class CorpusUtils {
 				e.printStackTrace();
 			}
 		}
-		
+
 		else if (args[0].equalsIgnoreCase("-bestAttributes")) {
 			String fileName = args[1];
 			String lexicon = args[2];

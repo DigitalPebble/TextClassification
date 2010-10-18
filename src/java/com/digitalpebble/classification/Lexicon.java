@@ -202,7 +202,7 @@ public class Lexicon {
 	 * @return
 	 */
 	public int getIndex(String tokenForm) {
-		tokenForm = tokenForm.replaceAll("\\W+", "_");
+		// tokenForm = tokenForm.replaceAll("\\W+", "_");
 		int[] index = (int[]) tokenForm2index.get(tokenForm);
 		if (index == null)
 			return -1;

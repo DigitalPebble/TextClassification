@@ -273,7 +273,7 @@ public class SimpleDocument implements Document {
 		SimpleDocument newdoc = new SimpleDocument();
 		try {
 			newdoc.label = Integer.parseInt(splits[1]);
-			newdoc.totalNumberTokens = Integer.parseInt(splits[2]);
+			newdoc.totalNumberTokens = Double.parseDouble(splits[2]);
 			// num features
 			int numfeatures = splits.length - 3;
 			newdoc.freqs = new int[numfeatures];

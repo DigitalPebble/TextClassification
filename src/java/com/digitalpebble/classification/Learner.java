@@ -224,6 +224,13 @@ public abstract class Learner {
 		else
 			throw new Exception(implementationName + " is unknown");
 
+		// reuse the existing lexicon
+		if (!overwrite) {
+			Lexicon oldlexicon = new Lexicon(lexicon_file_name);
+			if (oldlexicon != null)
+				learner.lexicon = oldlexicon;
+		}
+
 		learner.workdirectory = directory;
 		return learner;
 	}

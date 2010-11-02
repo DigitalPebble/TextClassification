@@ -3,6 +3,7 @@
 - added TestWeightingSchemes
 - can remap the attribute numbers before generating the vector file
 - bugfix : could not use SimpleDocuments with a file backed corpus (jiuren)
+- bugfix : loading new Learner from existing dataset generates a new Lexicon (jiuren)
 1.4
 - added XMLCorpusReader and XMLCorpusClassifier which generate a raw file from a XML corpus or classify a XML corpus using an existing model
 - added java implementation of liblinear

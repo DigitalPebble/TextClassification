@@ -1,4 +1,5 @@
 1.4.1-SNAPSHOT
+- updated to liblinear 1.7 
 - can specify weighting schemes per field
 - added TestWeightingSchemes
 - can remap the attribute numbers before generating the vector file

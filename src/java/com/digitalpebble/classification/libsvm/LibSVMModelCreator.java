@@ -29,7 +29,6 @@ import libsvm.svm_model;
 import libsvm.svm_node;
 import libsvm.svm_parameter;
 import libsvm.svm_problem;
-import libsvm.svm_problem_impl;
 
 import com.digitalpebble.classification.Document;
 import com.digitalpebble.classification.Learner;
@@ -94,12 +93,6 @@ public class LibSVMModelCreator extends Learner {
 		} else {
 			model = svm.svm_train(prob, param);
 			svm.svm_save_model(model_file_name, model);
-			// dump linear weights in lexicon
-			try {
-				double[] weights = model.getLinearWeights();
-				this.lexicon.setLinearWeight(weights);
-			} catch (Exception e) {
-			}
 		}
 	}
 
@@ -221,12 +214,15 @@ public class LibSVMModelCreator extends Learner {
 				max_index = Math.max(max_index, x[m - 1].index);
 			vx.addElement(x);
 		}
-		prob = new svm_problem_impl(vy.size());
-		for (int i = 0; i < prob.size(); i++)
-			prob.setNodes(i, (svm_node[]) vx.elementAt(i));
-		for (int i = 0; i < prob.size(); i++) {
+		prob = new svm_problem();
+		prob.l=vy.size();
+		prob.y = new double[prob.l];
+		prob.x = new svm_node[prob.l][];
+		for (int i = 0; i < prob.l; i++)
+			prob.x[i]= (svm_node[]) vx.elementAt(i);
+		for (int i = 0; i < prob.l; i++) {
 			double labell = Double.parseDouble((String) vy.elementAt(i));
-			prob.setLabel(i, labell);
+			prob.y[i]= labell;
 		}
 		if (param.gamma == 0)
 			param.gamma = 1.0 / max_index;
@@ -246,13 +242,13 @@ public class LibSVMModelCreator extends Learner {
 		int total_correct = 0;
 		double total_error = 0;
 		double sumv = 0, sumy = 0, sumvv = 0, sumyy = 0, sumvy = 0;
-		double size = prob.size();
-		double[] target = new double[prob.size()];
+		double size = prob.l;
+		double[] target = new double[prob.l];
 		svm.svm_cross_validation(prob, param, this.nfold, target);
 		if (param.svm_type == svm_parameter.EPSILON_SVR
 				|| param.svm_type == svm_parameter.NU_SVR) {
-			for (i = 0; i < prob.size(); i++) {
-				double y = prob.getLabel(i);
+			for (i = 0; i < prob.l; i++) {
+				double y = prob.y[i];
 				double v = target[i];
 				total_error += (v - y) * (v - y);
 				sumv += v;
@@ -274,7 +270,7 @@ public class LibSVMModelCreator extends Learner {
 		int numclasses = lexicon.getLabelNum();
 		double[][] confMatrix = new double[numclasses][numclasses];
 		for (i = 0; i < size; i++) {
-			double expected = prob.getLabel(i);
+			double expected = prob.y[i];
 			if (target[i] == expected)
 				++total_correct;
 			confMatrix[(int) target[i]][(int) expected]++;
@@ -328,13 +324,13 @@ public class LibSVMModelCreator extends Learner {
 		Map<Integer, String> inverted = lexicon.getInvertedIndex();
 		for (i = 0; i < size; i++) {
 			StringBuffer sb = new StringBuffer();
-			double expected = prob.getLabel(i);
+			double expected = prob.y[i];
 			if (target[i] == expected)
 				continue;
 			sb.append("expected: ").append(lexicon.getLabel((int) expected))
 					.append("\tfound:").append(
 							lexicon.getLabel((int) target[i]));
-			svm_node[] nodes = prob.getNodes(i);
+			svm_node[] nodes = prob.x[i];
 			for (svm_node node : nodes) {
 				String attLabel = inverted.get(new Integer(node.index));
 				if (attLabel == null)

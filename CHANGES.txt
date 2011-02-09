@@ -1,4 +1,4 @@
-1.4.1-SNAPSHOT
+1.5-SNAPSHOT
 - upgraded lisvm 3.0 + rely on external lib instead of modified code
 - upgraded liblinear 1.7 
 - can specify weighting schemes per field

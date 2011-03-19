@@ -167,7 +167,7 @@ public class Lexicon {
 			if (!create)
 				return new Integer(-1);
 			fields.put(fieldName, ++lastFieldId);
-			return new Integer(lastFieldId);
+			return Integer.valueOf(lastFieldId);
 		}
 		return id;
 	}
@@ -214,7 +214,7 @@ public class Lexicon {
 	 * term is unknown or has been filtered
 	 **************************************************************************/
 	public int getDocFreq(int term) {
-		int[] docfreq = (int[]) this.index2docfreq.get(new Integer(term));
+		int[] docfreq = (int[]) this.index2docfreq.get(Integer.valueOf(term));
 		if (docfreq == null)
 			return 0;
 		return docfreq[0];
@@ -241,7 +241,7 @@ public class Lexicon {
 		for (int i = 0; i < terms2remove.size(); i++) {
 			String term = (String) terms2remove.get(i);
 			int[] index = this.tokenForm2index.remove(term);
-			this.index2docfreq.remove(new Integer(index[0]));
+			this.index2docfreq.remove(Integer.valueOf(index[0]));
 		}
 
 	}
@@ -269,7 +269,7 @@ public class Lexicon {
 		for (int i = 0; i < terms2remove.size(); i++) {
 			String term = (String) terms2remove.get(i);
 			int[] index = this.tokenForm2index.remove(term);
-			this.index2docfreq.remove(new Integer(index[0]));
+			this.index2docfreq.remove(Integer.valueOf(index[0]));
 		}
 	}
 
@@ -284,7 +284,7 @@ public class Lexicon {
 		}
 		// add information about number of documents
 		// for the term
-		Integer integ = new Integer(index[0]);
+		Integer integ = Integer.valueOf(index[0]);
 		int[] docfreq = (int[]) this.index2docfreq.get(integ);
 		if (docfreq == null) {
 			docfreq = new int[] { 0 };
@@ -328,7 +328,7 @@ public class Lexicon {
 			int[] aindex = new int[] { index };
 			int[] adocs = new int[] { docs };
 			this.tokenForm2index.put(content_pos[0], aindex);
-			this.index2docfreq.put(new Integer(index), adocs);
+			this.index2docfreq.put(Integer.valueOf(index), adocs);
 			loaded++;
 		}
 		this.nextAttributeID = highestID + 1;
@@ -425,7 +425,7 @@ public class Lexicon {
 		while (keyiter.hasNext()) {
 			String key = keyiter.next();
 			int[] index = tokenForm2index.get(key);
-			Integer i = new Integer(index[0]);
+			Integer i = Integer.valueOf(index[0]);
 			inverted.put(i, key);
 		}
 		return inverted;

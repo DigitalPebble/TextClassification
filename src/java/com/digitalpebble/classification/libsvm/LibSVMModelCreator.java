@@ -332,7 +332,7 @@ public class LibSVMModelCreator extends Learner {
 							lexicon.getLabel((int) target[i]));
 			svm_node[] nodes = prob.x[i];
 			for (svm_node node : nodes) {
-				String attLabel = inverted.get(new Integer(node.index));
+				String attLabel = inverted.get(Integer.valueOf(node.index));
 				if (attLabel == null)
 					attLabel = "null:" + node.index;
 				sb.append("\t").append(attLabel);

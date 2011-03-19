@@ -42,7 +42,7 @@ public class AttributeScorer {
 	}
 
 	public void setScore(int id, double score) {
-		map.put(new Integer(id), new Double(score));
+		map.put(Integer.valueOf(id), Double.valueOf(score));
 	}
 
 	/***************************************************************************

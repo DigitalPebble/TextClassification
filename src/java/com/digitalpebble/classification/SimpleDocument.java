@@ -19,6 +19,7 @@ package com.digitalpebble.classification;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.Map.Entry;
 
 /*******************************************************************************
  * A Document is built by an instance of Learner or Classifier
@@ -46,7 +47,7 @@ public class SimpleDocument implements Document {
 
 		// create a vector for this document
 		// from the individual tokens
-		TreeMap tokens = new TreeMap();
+		TreeMap<String, int[]> tokens = new TreeMap<String, int[]>();
 		for (int token = 0; token < tokenstring.length; token++) {
 			// remove null strings or empty strings
 			if (tokenstring[token] == null)
@@ -67,10 +68,11 @@ public class SimpleDocument implements Document {
 		freqs = new int[tokens.size()];
 		int lastused = 0;
 		// iterates on the internal vector
-		Iterator iter = tokens.keySet().iterator();
+		Iterator<Entry<String, int[]>> iter = tokens.entrySet().iterator();
 		while (iter.hasNext()) {
-			String key = (String) iter.next();
-			int[] localFreq = (int[]) tokens.get(key);
+			Entry<String, int[]> entry = iter.next();
+			String key = entry.getKey();
+			int[] localFreq = entry.getValue();
 			// gets the index from the lexicon
 			int index = -1;
 			if (create) {

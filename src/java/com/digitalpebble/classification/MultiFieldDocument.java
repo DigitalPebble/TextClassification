@@ -19,6 +19,7 @@ package com.digitalpebble.classification;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.Map.Entry;
 
 import com.digitalpebble.classification.Parameters.WeightingMethod;
 
@@ -89,10 +90,12 @@ public class MultiFieldDocument implements Document {
 
 		int lastused = 0;
 		// iterates on the internal vector
-		Iterator iter = tokens.keySet().iterator();
+		Iterator<Entry<TokenField, int[]>> iter = tokens.entrySet().iterator();
 		while (iter.hasNext()) {
-			TokenField key = (TokenField) iter.next();
-			int[] localFreq = (int[]) tokens.get(key);
+			Entry<TokenField, int[]> entry = iter.next();
+			TokenField key = entry.getKey();
+			int[] localFreq = entry.getValue();
+
 			// gets the index from the lexicon
 			int index = -1;
 			if (create) {
@@ -168,9 +171,8 @@ public class MultiFieldDocument implements Document {
 		for (int i = 0; i < indices.length; i++) {
 			int fieldNum = this.indexToField[i];
 			if (java.util.Arrays.binarySearch(fieldToKeep, fieldNum) != -1)
-				buffer.append("\t").append(indices[i]).append(":")
-						.append(freqs[i]).append(":")
-						.append(this.indexToField[i]);
+				buffer.append("\t").append(indices[i]).append(":").append(
+						freqs[i]).append(":").append(this.indexToField[i]);
 		}
 		buffer.append("\n");
 		return buffer.toString();
@@ -249,7 +251,7 @@ public class MultiFieldDocument implements Document {
 				// filtered
 				if (newPos == null)
 					indices[pos] = Integer.MAX_VALUE;
-				else 
+				else
 					indices[pos] = newPos.intValue();
 			}
 			// resort the indices

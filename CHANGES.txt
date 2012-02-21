@@ -1,3 +1,6 @@
+1.6
+- upgraded liblinear 1.8
+- uses Maven to build and manage the dependencies
 1.5
 - added parameter to ModelUtils to show only the top N most important attributes per category
 - upgraded lisvm 3.0 + rely on external lib instead of modified code

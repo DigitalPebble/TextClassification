@@ -4,14 +4,14 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import liblinear.FeatureNode;
-import liblinear.Linear;
-import liblinear.Model;
-
 import com.digitalpebble.classification.Document;
 import com.digitalpebble.classification.Parameters;
 import com.digitalpebble.classification.TextClassifier;
 import com.digitalpebble.classification.Vector;
+
+import de.bwaldvogel.liblinear.FeatureNode;
+import de.bwaldvogel.liblinear.Linear;
+import de.bwaldvogel.liblinear.Model;
 
 public class LibLinearClassifier extends TextClassifier {
   

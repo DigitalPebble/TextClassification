@@ -1,4 +1,4 @@
-A Text Classification API in Java originally developed by DigitalPebble Ltd. The API is independent from the ML implementations used and can be used as a front end to various ML algorithms. libSVM and liblinear are currently embedded.
+A Text Classification API in Java originally developed by DigitalPebble Ltd. The API is independent from the ML implementations used and can be used as a front end to various ML algorithms. libSVM and liblinear [https://github.com/bwaldvogel/liblinear-java] are currently embedded.
 
 Standard weighting schemes are provided (occurrences,frequency,tf-idf) for building the vectors. The API aims at facilitating the use of ML for text applications and offers a convenient field-based representation of documents (e.g. title, content, keywords, etc...) with the option to specify a different weighting scheme per field.
 

@@ -22,9 +22,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import liblinear.Model;
-
 import com.digitalpebble.classification.Lexicon;
+
+import de.bwaldvogel.liblinear.Model;
 
 public class ModelUtils {
 

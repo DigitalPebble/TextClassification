@@ -1,53 +1,72 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                              http://maven.apache.org/maven-v4_0_0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+	<modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.digitalpebble.textclassification</groupId>
-    <artifactId>textclassification</artifactId>
-    <packaging>jar</packaging>
-    <version>1.6</version>
-    <name>TextClassificationAPI</name>
-    <url>https://github.com/jnioche/textclassification</url>
+	<groupId>com.digitalpebble.textclassification</groupId>
+	<artifactId>textclassification</artifactId>
+	<packaging>jar</packaging>
+	<version>1.6</version>
+	<name>TextClassificationAPI</name>
+	<description>Java API for TextClassification</description>
+	<url>https://github.com/jnioche/textclassification</url>
+	<licenses>
+		<license>
+			<name>Apache License, Version 2.0</name>
+			<url>http://www.opensource.org/licenses/apache2.0.php</url>
+		</license>
+	</licenses>
 
- <build>
-        <finalName>TextClassificationAPI-${project.version}</finalName>
-        <plugins>
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+	<scm>
+		<connection>scm:git:git@github.com:jnioche/TextClassification.git</connection>
+		<url>git@github.com:jnioche/TextClassification.git</url>
+	</scm>
 
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
+	<developers>
+		<developer>
+			<id>jnioche</id>
+			<name>Julien Nioche</name>
+			<email>julien@digitalpebble.com</email>
+		</developer>
+	</developers>
 
-  <dependencies>
-  <dependency>
-	<groupId>de.bwaldvogel</groupId>
-	<artifactId>liblinear</artifactId>
-	<version>1.8</version>
-  </dependency>
+	<build>
+		<finalName>TextClassificationAPI-${project.version}</finalName>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 
-  <dependency>
-	<groupId>libsvm</groupId>
-	<artifactId>libsvm</artifactId>
-	<version>3.0</version>
-  </dependency>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
 
- <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.8.2</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
+	<dependencies>
+		<dependency>
+			<groupId>de.bwaldvogel</groupId>
+			<artifactId>liblinear</artifactId>
+			<version>1.8</version>
+		</dependency>
+
+		<dependency>
+			<groupId>tw.edu.ntu.csie</groupId>
+			<artifactId>libsvm</artifactId>
+			<version>3.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.8.2</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
 
 
 </project>

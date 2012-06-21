@@ -16,13 +16,18 @@
 
 package com.digitalpebble.classification.util;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import com.digitalpebble.classification.Document;
 import com.digitalpebble.classification.Lexicon;
+import com.digitalpebble.classification.TextClassifier;
 
 import de.bwaldvogel.liblinear.Model;
 
@@ -88,11 +93,12 @@ public class ModelUtils {
 		Iterator labelIter = topAttributesPerLabel.keySet().iterator();
 		while (labelIter.hasNext()) {
 			String label = (String) labelIter.next();
-			System.out.println("LABEL : " +label);
+			System.out.println("LABEL : " + label);
 			WeightedAttributeQueue queue = topAttributesPerLabel.get(label);
 			for (int i = queue.size() - 1; i >= 0; i--) {
 				WeightedAttribute wa = queue.pop();
-				System.out.println((topAttributesNumber-i)+"\t" + wa.label + " : " + wa.weight);
+				System.out.println((topAttributesNumber - i) + "\t" + wa.label
+						+ " : " + wa.weight);
 			}
 		}
 	}
@@ -101,7 +107,8 @@ public class ModelUtils {
 		if (args.length < 2) {
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("ModelUtils : \n");
-			buffer.append("\t -getAttributeScores modeFile lexicon\n");
+			buffer.append("\t -getAttributeScores modelFile lexicon [topAttributesThreshold]\n");
+			buffer.append("\t -classifyTextFile resourceDir input\n");
 			System.out.println(buffer.toString());
 			return;
 		}
@@ -116,6 +123,40 @@ public class ModelUtils {
 			try {
 				getAttributeScores(model, lexicon, topAttributesNumber);
 			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		else if (args[0].equalsIgnoreCase("-classifyTextFile")) {
+			String resourceDir = args[1];
+			String inputTextFile = args[2];
+
+			// load text file as String
+			StringBuffer text = new StringBuffer();
+			String line;
+			BufferedReader br;
+			try {
+				br = new BufferedReader(new FileReader(new File(inputTextFile)));
+
+				while ((line = br.readLine()) != null) {
+					text.append(line).append("\n");
+				}
+				
+				br.close();
+
+				// load classifier
+				TextClassifier classifier = TextClassifier
+						.getClassifier(new File(resourceDir));
+				// create a document from a String
+				String[] tokens = Tokenizer.tokenize(text.toString(), true);
+				Document doc = classifier.createDocument(tokens);
+				// classify
+				double[] scores = classifier.classify(doc);
+				// get best label
+				String label = classifier.getBestLabel(scores);
+				System.out.println("Classified as : "+label);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

@@ -41,7 +41,7 @@ public abstract class TextClassifier {
   public static TextClassifier getClassifier(File resourceDirectoryFile)
     throws Exception {
     // check whether we need to unzip the resources first
-    if (resourceDirectoryFile.toString().endsWith(".zip")){
+    if (resourceDirectoryFile.toString().endsWith(".zip") && resourceDirectoryFile.isFile()){
       resourceDirectoryFile = UnZip.unzip(resourceDirectoryFile);
     }
     // check the existence of the path

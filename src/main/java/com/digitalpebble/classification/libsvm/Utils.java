@@ -30,81 +30,165 @@ import com.digitalpebble.classification.TrainingCorpus;
 import com.digitalpebble.classification.Vector;
 
 public class Utils {
-	/**
-	 * Reads the output of the reader and delivers it at string.
-	 */
-	public static String readOutput(BufferedReader in) throws IOException {
-		StringBuffer output = new StringBuffer();
-		String line = "";
-		while ((line = in.readLine()) != null) {
-			output.append(line);
-			output.append("\n");
-		}
-		return output.toString();
-	}
+    /**
+     * Reads the output of the reader and delivers it at string.
+     */
+    public static String readOutput(BufferedReader in) throws IOException {
+        StringBuffer output = new StringBuffer();
+        String line = "";
+        while ((line = in.readLine()) != null) {
+            output.append(line);
+            output.append("\n");
+        }
+        return output.toString();
+    }
 
-	public static File writeExamples(Document[] documents, Lexicon lexicon,
-			boolean create, String vector_location) throws IOException {
-		File vectorFile = new File(vector_location);
-		PrintWriter out = null;
-		out = new PrintWriter(new FileWriter(vectorFile));
-		for (int i = 0; i < documents.length; i++) {
-			Document doc = documents[i];
-			int label = doc.getLabel();
-			// get a vector from the document
-			// need a metric (e.g. relative frequency / binary)
-			// and a lexicon
-			// the vector is represented as a string directly
-			Vector vector = doc.getFeatureVector(lexicon);
-			out.print(label + " " + Utils.getVectorString(vector) + "\n");
-		}
-		out.close();
-		return vectorFile;
-	}
+    public static File writeExamples(Document[] documents, Lexicon lexicon,
+            boolean create, String vector_location) throws IOException {
+        File vectorFile = new File(vector_location);
+        PrintWriter out = null;
+        out = new PrintWriter(new FileWriter(vectorFile));
+        for (int i = 0; i < documents.length; i++) {
+            Document doc = documents[i];
+            int label = doc.getLabel();
+            // get a vector from the document
+            // need a metric (e.g. relative frequency / binary)
+            // and a lexicon
+            // the vector is represented as a string directly
+            Vector vector = doc.getFeatureVector(lexicon);
+            out.print(label + " " + Utils.getVectorString(vector) + "\n");
+        }
+        out.close();
+        return vectorFile;
+    }
 
-	/**
-	 * returns a vector i.e sequence of feature:value needs to have a pointer to
-	 * the Lexicon used during the creation of the document here we generate the
-	 * scores, taking into account the data in the lexicon
-	 */
-	private static String getVectorString(Vector vector) {
-		StringBuffer buffer = new StringBuffer();
-		int[] indices = vector.getIndices();
-		double[] values = vector.getValues();
-		for (int i = 0; i < indices.length; i++) {
-			buffer.append(" ").append(indices[i]).append(":").append(values[i]);
-		}
-		return buffer.toString();
-	}
+    /**
+     * returns a vector i.e sequence of feature:value needs to have a pointer to
+     * the Lexicon used during the creation of the document here we generate the
+     * scores, taking into account the data in the lexicon
+     */
+    private static String getVectorString(Vector vector) {
+        StringBuffer buffer = new StringBuffer();
+        int[] indices = vector.getIndices();
+        double[] values = vector.getValues();
+        for (int i = 0; i < indices.length; i++) {
+            buffer.append(" ").append(indices[i]).append(":").append(values[i]);
+        }
+        return buffer.toString();
+    }
 
-	public static File writeExamples(TrainingCorpus corpus, Lexicon lexicon,
-			boolean b, String vector_location) throws IOException {
-		return  writeExamples(corpus, lexicon,
-				b, vector_location, null);
-	}
-	
-	public static File writeExamples(TrainingCorpus corpus, Lexicon lexicon,
-			boolean b, String vector_location, Map <Integer,Integer> attributeMapping) throws IOException {
-		File vectorFile = new File(vector_location);
-		PrintWriter out = null;
-		out = new PrintWriter(new FileWriter(vectorFile));
-		// get an iterator on the Corpus
-		// and retrieve the documents one by one 
-		Iterator<Document> docIterator = corpus.iterator();
-		while (docIterator.hasNext()){
-			Document doc = docIterator.next();
-			int label = doc.getLabel();
-			// get a vector from the document
-			// need a metric (e.g. relative frequency / binary)
-			// and a lexicon
-			// the vector is represented as a string directly
-			Vector vector = null;
-			if (attributeMapping==null)  vector = doc.getFeatureVector(lexicon);
-			else vector = doc.getFeatureVector(lexicon,attributeMapping);
-			out.print(label + " " + Utils.getVectorString(vector) + "\n");
-		}
-		out.close();
-		return vectorFile;
-	}
+    public static File writeExamples(TrainingCorpus corpus, Lexicon lexicon,
+            boolean b, String vector_location) throws IOException {
+        return writeExamples(corpus, lexicon, b, vector_location, null, null);
+    }
 
+    public static File writeExamples(TrainingCorpus corpus, Lexicon lexicon,
+            boolean b, String vector_location,
+            Map<Integer, Integer> attributeMapping) throws IOException {
+        return writeExamples(corpus, lexicon, b, vector_location, null, null);
+    }
+
+    public static File writeExamples(TrainingCorpus corpus, Lexicon lexicon,
+            boolean b, String vector_location,
+            Map<Integer, Integer> attributeMapping, String format)
+            throws IOException {
+        if ("arff".equalsIgnoreCase(format))
+            return writeARFF(corpus, lexicon, b, vector_location,
+                    attributeMapping);
+        return writeVectors(corpus, lexicon, b, vector_location,
+                attributeMapping);
+    }
+
+    public static File writeVectors(TrainingCorpus corpus, Lexicon lexicon,
+            boolean b, String vector_location,
+            Map<Integer, Integer> attributeMapping) throws IOException {
+        File vectorFile = new File(vector_location);
+        PrintWriter out = null;
+        out = new PrintWriter(new FileWriter(vectorFile));
+        // get an iterator on the Corpus
+        // and retrieve the documents one by one
+        Iterator<Document> docIterator = corpus.iterator();
+        while (docIterator.hasNext()) {
+            Document doc = docIterator.next();
+            int label = doc.getLabel();
+            // get a vector from the document
+            // need a metric (e.g. relative frequency / binary)
+            // and a lexicon
+            // the vector is represented as a string directly
+            Vector vector = null;
+            if (attributeMapping == null)
+                vector = doc.getFeatureVector(lexicon);
+            else
+                vector = doc.getFeatureVector(lexicon, attributeMapping);
+            out.print(label + " " + Utils.getVectorString(vector) + "\n");
+        }
+        out.close();
+        return vectorFile;
+    }
+
+    public static File writeARFF(TrainingCorpus corpus, Lexicon lexicon,
+            boolean b, String vector_location,
+            Map<Integer, Integer> attributeMapping) throws IOException {
+        File vectorFile = new File(vector_location);
+        PrintWriter out = null;
+        out = new PrintWriter(new FileWriter(vectorFile));
+
+        // generate the arff headers
+        out.print("@relation dataset generated with the TC API\n\n");
+
+        // dump the content of the lexicon file
+        int attributeNum = lexicon.getAttributesNum();
+        Map<Integer, String> iindex = lexicon.getInvertedIndex();
+        for (int c = 0; c < attributeNum; c++) {
+            String attrib = iindex.get(c);
+            if (attrib == null)
+                attrib = "NULL";
+            else
+                attrib = attrib.replaceAll("\\s", "_");
+            out.print("@attribute " + attrib + "  NUMERIC\n");
+        }
+
+        // label values
+        out.print("@attribute label  NUMERIC\n");
+
+        out.print("\n");
+
+        out.print("@data\n");
+
+        // get an iterator on the Corpus
+        // and retrieve the documents one by one
+        Iterator<Document> docIterator = corpus.iterator();
+        while (docIterator.hasNext()) {
+            Document doc = docIterator.next();
+            int label = doc.getLabel();
+            // get a vector from the document
+            // need a metric (e.g. relative frequency / binary)
+            // and a lexicon
+            // the vector is represented as a string directly
+            Vector vector = null;
+            if (attributeMapping == null)
+                vector = doc.getFeatureVector(lexicon);
+            else
+                vector = doc.getFeatureVector(lexicon, attributeMapping);
+
+            // {1 X, 3 Y, 4 "class A"}
+            // index space value
+            StringBuffer buffer = new StringBuffer("{");
+            int[] indices = vector.getIndices();
+            double[] values = vector.getValues();
+            for (int i = 0; i < indices.length; i++) {
+                if (i > 0)
+                    buffer.append(", ");
+                buffer.append(indices[i]).append(" ").append(values[i]);
+            }
+            // label
+            if (indices.length > 0)
+                buffer.append(", ");
+            buffer.append(attributeNum).append(" ").append(label);
+            buffer.append("}\n");
+            out.print(buffer.toString());
+        }
+        out.close();
+        return vectorFile;
+    }
 }

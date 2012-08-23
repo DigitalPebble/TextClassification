@@ -9,7 +9,7 @@
 	<version>1.6.1</version>
 	<name>TextClassificationAPI</name>
 	<description>Java API for TextClassification</description>
-	<url>https://github.com/jnioche/textclassification</url>
+	<url>https://github.com/DigitalPebble/textclassification</url>
 	<licenses>
 		<license>
 			<name>Apache License, Version 2.0</name>
@@ -18,9 +18,11 @@
 	</licenses>
 
 	<scm>
-		<connection>scm:git:git@github.com:jnioche/TextClassification.git</connection>
-		<url>git@github.com:jnioche/TextClassification.git</url>
+		<connection>scm:git:git@github.com:DigitalPebble/TextClassification.git</connection>
+		<developerConnection>scm:git:git@github.com:DigitalPebble/TextClassification.git</developerConnection>
+		<url>https://github.com/DigitalPebble/TextClassification</url>
 	</scm>
+
 
 	<developers>
 		<developer>
@@ -29,6 +31,12 @@
 			<email>julien@digitalpebble.com</email>
 		</developer>
 	</developers>
+
+	<parent>
+		<groupId>org.sonatype.oss</groupId>
+		<artifactId>oss-parent</artifactId>
+		<version>7</version>
+	</parent>
 
 	<build>
 		<finalName>TextClassificationAPI-${project.version}</finalName>

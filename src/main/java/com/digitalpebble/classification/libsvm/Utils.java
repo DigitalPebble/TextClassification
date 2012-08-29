@@ -134,22 +134,26 @@ public class Utils {
         out = new PrintWriter(new FileWriter(vectorFile));
 
         // generate the arff headers
-        out.print("@relation dataset generated with the TC API\n\n");
+        out.print("@relation dataset\n\n");
+
+        // label values
+        out.print("@attribute label  NUMERIC\n");
 
         // dump the content of the lexicon file
         int attributeNum = lexicon.getAttributesNum();
         Map<Integer, String> iindex = lexicon.getInvertedIndex();
-        for (int c = 0; c < attributeNum; c++) {
+        for (int c = 1; c <= attributeNum; c++) {
             String attrib = iindex.get(c);
             if (attrib == null)
                 attrib = "NULL";
             else
-                attrib = attrib.replaceAll("\\s", "_");
+                attrib = attrib.replaceAll("\\s+", " ");
+            attrib = attrib.replaceAll("\"", "&quote;");
+            if (attrib.endsWith("\\"))
+                attrib = attrib.substring(0, attrib.length() - 1);
+            attrib = "\"i_" + c + "_" + attrib + "\"";
             out.print("@attribute " + attrib + "  NUMERIC\n");
         }
-
-        // label values
-        out.print("@attribute label  NUMERIC\n");
 
         out.print("\n");
 
@@ -171,20 +175,21 @@ public class Utils {
             else
                 vector = doc.getFeatureVector(lexicon, attributeMapping);
 
+            StringBuffer buffer = new StringBuffer("{");
+
+            buffer.append("0 ").append(label);
+
             // {1 X, 3 Y, 4 "class A"}
             // index space value
-            StringBuffer buffer = new StringBuffer("{");
             int[] indices = vector.getIndices();
             double[] values = vector.getValues();
             for (int i = 0; i < indices.length; i++) {
-                if (i > 0)
+                if (buffer.length() > 1)
                     buffer.append(", ");
+                if (indices[i] > attributeNum)
+                    continue;
                 buffer.append(indices[i]).append(" ").append(values[i]);
             }
-            // label
-            if (indices.length > 0)
-                buffer.append(", ");
-            buffer.append(attributeNum).append(" ").append(label);
             buffer.append("}\n");
             out.print(buffer.toString());
         }

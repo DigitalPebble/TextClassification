@@ -21,8 +21,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import com.digitalpebble.classification.Document;
@@ -57,48 +59,69 @@ public class ModelUtils {
 		Map<String, WeightedAttributeQueue> topAttributesPerLabel = new HashMap<String, WeightedAttributeQueue>(
 				numClasses);
 
-		for (int i = 0; i < weights.length; i++) {
-			// get current class num
-			int classNum = i / numFeatures;
-			int featNum = i % numFeatures;
-			String classLabel = lexicon.getLabel(classNum);
-			String attLabel = invertedAttributeIndex.get(featNum + 1);
+		// for (int i = 0; i < nr_w; i++) {
+		// double contrib = w[(idx - 1) * nr_w + i] * lx.getValue();
+		// }
+		//
+		// idx 1 in class 1 -> 0 x 22 + 0 = 0
+		// idx 2 in class 1 -> 1 x 22 + 0 = 22
+		// idx 1 in class 2 -> 0 x 22 + 1 = 1
+		// idx 2 in class 2 -> 1 x 22 + 1 = 23
 
-			// display the values between -0.001 and +0.001 as 0
-			if (weights[i] < 0.001 && weights[i] > -0.001)
-				weights[i] = 0;
-
-			// want to limit to the top n terms?
-			if (topAttributesNumber != -1) {
-				WeightedAttributeQueue queue = topAttributesPerLabel
-						.get(classLabel);
-				if (queue == null) {
-					queue = new WeightedAttributeQueue(topAttributesNumber);
-					topAttributesPerLabel.put(classLabel, queue);
-				}
-				WeightedAttribute wa = new WeightedAttribute(attLabel,
-						weights[i]);
-				queue.insertWithOverflow(wa);
-				continue;
+		// initialise the queues
+		if (topAttributesNumber != -1) {
+			for (int classNum = 0; classNum < numClasses; classNum++) {
+				String classLabel = lexicon.getLabel(classNum);
+				WeightedAttributeQueue queue = new WeightedAttributeQueue(
+						topAttributesNumber);
+				topAttributesPerLabel.put(classLabel, queue);
 			}
+		}
 
-			System.out
-					.println(attLabel + "\t" + classLabel + "\t" + weights[i]);
+		for (int classNum = 0; classNum < numClasses; classNum++) {
+			String classLabel = lexicon.getLabel(classNum);
+			WeightedAttributeQueue queue = topAttributesPerLabel
+					.get(classLabel);
+			for (int featNum = 0; featNum < numFeatures; featNum++) {
+				int pos = featNum * numClasses + classNum;
+				double featWeight = weights[pos];
+				String attLabel = invertedAttributeIndex.get(featNum + 1);
+
+				// display the values between -0.001 and +0.001 as 0
+				if (featWeight < 0.001 && featWeight > -0.001)
+					featWeight = 0;
+				// want to limit to the top n terms?
+				if (topAttributesNumber != -1) {
+					WeightedAttribute wa = new WeightedAttribute(attLabel,
+							featWeight);
+					queue.insertWithOverflow(wa);
+					continue;
+				}
+
+				System.out.println(attLabel + "\t" + classLabel + "\t"
+						+ featWeight);
+			}
 		}
 
 		// dump the attributes per label
 		if (topAttributesNumber < 1)
 			return;
 
-		Iterator labelIter = topAttributesPerLabel.keySet().iterator();
+		Iterator<String> labelIter = topAttributesPerLabel.keySet().iterator();
 		while (labelIter.hasNext()) {
 			String label = (String) labelIter.next();
 			System.out.println("LABEL : " + label);
 			WeightedAttributeQueue queue = topAttributesPerLabel.get(label);
+			// revert the order
+			String[] sorted = new String[queue.size()];
+
 			for (int i = queue.size() - 1; i >= 0; i--) {
 				WeightedAttribute wa = queue.pop();
-				System.out.println((topAttributesNumber - i) + "\t" + wa.label
-						+ " : " + wa.weight);
+				sorted[i] = wa.label + " : " + wa.weight;
+			}
+			
+			for (int j=0;j<sorted.length;j++){
+				System.out.println(j+1 + "\t" + sorted[j]);
 			}
 		}
 	}
@@ -141,7 +164,7 @@ public class ModelUtils {
 				while ((line = br.readLine()) != null) {
 					text.append(line).append("\n");
 				}
-				
+
 				br.close();
 
 				// load classifier
@@ -154,7 +177,7 @@ public class ModelUtils {
 				double[] scores = classifier.classify(doc);
 				// get best label
 				String label = classifier.getBestLabel(scores);
-				System.out.println("Classified as : "+label);
+				System.out.println("Classified as : " + label);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -178,16 +201,16 @@ class WeightedAttribute {
 	// rank the attributes based on weight
 	public int compareTo(WeightedAttribute att) {
 		double absoltarget = att.weight;
-		if (absoltarget < 0)
-			absoltarget = -absoltarget;
+		// if (absoltarget < 0)
+		// absoltarget = -absoltarget;
 		double absolsource = this.weight;
-		if (absolsource < 0)
-			absolsource = -absolsource;
+		// if (absolsource < 0)
+		// absolsource = -absolsource;
 		double diff = absolsource - absoltarget;
 		if (diff < 0)
 			return -1;
 		if (diff > 0)
-			return 1;
+			return +1;
 		return 0;
 	}
 

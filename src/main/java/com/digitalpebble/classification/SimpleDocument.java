@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.Map.Entry;
+import java.util.regex.Pattern;
 
 /*******************************************************************************
  * A Document is built by an instance of Learner or Classifier
@@ -32,6 +33,8 @@ public class SimpleDocument implements Document {
 	int[] freqs;
 
 	double totalNumberTokens = 0;
+	
+	private static final Pattern SPACE_PATTERN = Pattern.compile("\\s+");
 
 	// used when building from serialisation
 	private SimpleDocument() {
@@ -301,7 +304,7 @@ public class SimpleDocument implements Document {
 	 * won't contain any characters that would break it
 	 **/
 	private static String simpleNormalisationTokenString(String token) {
-		return token.replaceAll("\\s+", "_");
+	    return SPACE_PATTERN.matcher(token).replaceAll("_");
 	}
 
 }

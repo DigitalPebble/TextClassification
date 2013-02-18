@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.Map.Entry;
+import java.util.regex.Pattern;
 
 import com.digitalpebble.classification.Parameters.WeightingMethod;
 
@@ -34,6 +35,8 @@ public class MultiFieldDocument implements Document {
 	int[] indexToField;
 
 	double[] tokensPerField;
+	
+	private static final Pattern SPACE_PATTERN = Pattern.compile("\\s+");
 
 	private MultiFieldDocument() {
 	}
@@ -395,7 +398,7 @@ public class MultiFieldDocument implements Document {
 	 * won't contain any characters that would break it
 	 **/
 	private static String simpleNormalisationTokenString(String token) {
-		return token.replaceAll("\\s+", "_");
+	    return SPACE_PATTERN.matcher(token).replaceAll("_");
 	}
 
 }

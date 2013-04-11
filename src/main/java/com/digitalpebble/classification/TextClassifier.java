@@ -18,7 +18,11 @@ package com.digitalpebble.classification;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import com.digitalpebble.classification.util.UnZip;
 
@@ -152,6 +156,35 @@ public abstract class TextClassifier {
 			}
 		}
 		return this.lexicon.getLabel(best);
+	}
+
+	/***
+	 * returns the best labels for a classification given the array of scores
+	 * for each label and a ratio (between 0 and 1) of the highest score to be
+	 * used as a threshold
+	 **/
+	public String[] getBestLabels(double[] scores, float ratioOfBest) {
+		if (ratioOfBest > 1 | ratioOfBest <= 0)
+			throw new RuntimeException(
+					"ratioOfBest shoudl be > 0 and <= 1 but got " + ratioOfBest);
+		TreeMap<Double, String> sortedMap = new TreeMap<Double, String>();
+		double bestScore = 0d;
+		for (int d = 0; d < scores.length; d++) {
+			if (scores[d] > bestScore) {
+				bestScore = scores[d];
+			}
+			sortedMap.put(scores[d], this.lexicon.getLabel(d));
+		}
+		// find cutoffpoint
+		double threshold = bestScore * (double) ratioOfBest;
+		List<String> labelsKept = new ArrayList<String>();
+		Iterator<Entry<Double, String>> pairs = sortedMap.entrySet().iterator();
+		while (pairs.hasNext()) {
+			Entry<Double, String> pair = pairs.next();
+			if (pair.getKey() >= threshold)
+				labelsKept.add(pair.getValue());
+		}
+		return (String[]) labelsKept.toArray(new String[labelsKept.size()]);
 	}
 
 	/**

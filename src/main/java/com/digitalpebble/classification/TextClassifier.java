@@ -176,11 +176,8 @@ public abstract class TextClassifier {
 			sortedMap.put(scores[d], this.lexicon.getLabel(d));
 		}
 		// find cutoffpoint
-		double threshold = bestScore * (double) ratioOfBest;
-		// negative value?
-		if (bestScore<=0){
-			threshold = bestScore - threshold;
-		}
+		double margin = bestScore * (double) (1d - ratioOfBest);
+		double threshold = bestScore - margin;
 		
 		List<String> labelsKept = new ArrayList<String>();
 		Iterator<Entry<Double, String>> pairs = sortedMap.entrySet().iterator();

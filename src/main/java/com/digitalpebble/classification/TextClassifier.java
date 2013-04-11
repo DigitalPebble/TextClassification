@@ -168,7 +168,7 @@ public abstract class TextClassifier {
 			throw new RuntimeException(
 					"ratioOfBest shoudl be > 0 and <= 1 but got " + ratioOfBest);
 		TreeMap<Double, String> sortedMap = new TreeMap<Double, String>();
-		double bestScore = 0d;
+		double bestScore = -Double.MAX_VALUE;
 		for (int d = 0; d < scores.length; d++) {
 			if (scores[d] > bestScore) {
 				bestScore = scores[d];
@@ -177,6 +177,11 @@ public abstract class TextClassifier {
 		}
 		// find cutoffpoint
 		double threshold = bestScore * (double) ratioOfBest;
+		// negative value?
+		if (bestScore<=0){
+			threshold = bestScore - threshold;
+		}
+		
 		List<String> labelsKept = new ArrayList<String>();
 		Iterator<Entry<Double, String>> pairs = sortedMap.entrySet().iterator();
 		while (pairs.hasNext()) {

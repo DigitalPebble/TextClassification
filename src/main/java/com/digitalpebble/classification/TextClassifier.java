@@ -159,26 +159,33 @@ public abstract class TextClassifier {
 	}
 
 	/***
-	 * returns the best labels for a classification given the array of scores
-	 * for each label and a ratio (between 0 and 1) of the highest score to be
-	 * used as a threshold
+	 * Scales the scores between 0 and 1
 	 **/
 	public String[] getBestLabels(double[] scores, float ratioOfBest) {
 		if (ratioOfBest > 1 | ratioOfBest <= 0)
 			throw new RuntimeException(
 					"ratioOfBest shoudl be > 0 and <= 1 but got " + ratioOfBest);
 		TreeMap<Double, String> sortedMap = new TreeMap<Double, String>();
-		double bestScore = -Double.MAX_VALUE;
+		double max = -Double.MAX_VALUE;
+		double min = Double.MAX_VALUE;
 		for (int d = 0; d < scores.length; d++) {
-			if (scores[d] > bestScore) {
-				bestScore = scores[d];
+			if (scores[d] > max) {
+				max = scores[d];
 			}
-			sortedMap.put(scores[d], this.lexicon.getLabel(d));
+			if (scores[d] < min) {
+				min = scores[d];
+			}
 		}
-		// find cutoffpoint
-		double margin = Math.abs(bestScore * (double) (1d - ratioOfBest));
-		double threshold = bestScore - margin;
-		
+
+		double scaleFactor = max - min;
+		for (int x = 0; x < scores.length; x++) {
+			double newScore = ((scores[x] - min) / scaleFactor);
+			sortedMap.put(newScore, this.lexicon.getLabel(x));
+		}
+
+		// find cutoffpoint -> we know that the best label will have a value of 1
+		double threshold = ratioOfBest;
+
 		List<String> labelsKept = new ArrayList<String>();
 		Iterator<Entry<Double, String>> pairs = sortedMap.entrySet().iterator();
 		while (pairs.hasNext()) {
@@ -186,7 +193,7 @@ public abstract class TextClassifier {
 			if (pair.getKey() >= threshold)
 				labelsKept.add(pair.getValue());
 		}
- 		return (String[]) labelsKept.toArray(new String[labelsKept.size()]);
+		return (String[]) labelsKept.toArray(new String[labelsKept.size()]);
 	}
 
 	/**

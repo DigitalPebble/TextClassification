@@ -119,11 +119,35 @@ public class ModelUtils {
 				WeightedAttribute wa = queue.pop();
 				sorted[i] = wa.label + " : " + wa.weight;
 			}
-			
-			for (int j=0;j<sorted.length;j++){
-				System.out.println(j+1 + "\t" + sorted[j]);
+
+			for (int j = 0; j < sorted.length; j++) {
+				System.out.println(j + 1 + "\t" + sorted[j]);
 			}
 		}
+	}
+
+	private static void classifyDoc(File input, TextClassifier classifier)
+			throws Exception {
+		// load text file as String
+		StringBuffer text = new StringBuffer();
+		String line;
+		BufferedReader br = new BufferedReader(new FileReader(input));
+
+		while ((line = br.readLine()) != null) {
+			text.append(line).append("\n");
+		}
+
+		br.close();
+
+		// create a document from a String
+		String[] tokens = Tokenizer.tokenize(text.toString(), true);
+		Document doc = classifier.createDocument(tokens);
+		// classify
+		double[] scores = classifier.classify(doc);
+		// get best label
+		String label = classifier.getBestLabel(scores);
+		System.out.println(input.getCanonicalPath() + " classified as : "
+				+ label);
 	}
 
 	public static void main(String[] args) {
@@ -152,32 +176,24 @@ public class ModelUtils {
 
 		else if (args[0].equalsIgnoreCase("-classifyTextFile")) {
 			String resourceDir = args[1];
-			String inputTextFile = args[2];
+			File input = new File(args[2]);
 
-			// load text file as String
-			StringBuffer text = new StringBuffer();
-			String line;
-			BufferedReader br;
+			// load classifier
 			try {
-				br = new BufferedReader(new FileReader(new File(inputTextFile)));
-
-				while ((line = br.readLine()) != null) {
-					text.append(line).append("\n");
-				}
-
-				br.close();
-
-				// load classifier
 				TextClassifier classifier = TextClassifier
 						.getClassifier(new File(resourceDir));
-				// create a document from a String
-				String[] tokens = Tokenizer.tokenize(text.toString(), true);
-				Document doc = classifier.createDocument(tokens);
-				// classify
-				double[] scores = classifier.classify(doc);
-				// get best label
-				String label = classifier.getBestLabel(scores);
-				System.out.println("Classified as : " + label);
+
+				if (input.isDirectory()) {
+					for (File file : input.listFiles()) {
+						if (!file.getName().endsWith("txt"))
+							continue;
+						classifyDoc(file, classifier);
+					}
+				}
+
+				else {
+					classifyDoc(input, classifier);
+				}
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

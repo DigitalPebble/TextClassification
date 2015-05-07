@@ -17,19 +17,9 @@ public class LibLinearClassifier extends TextClassifier {
 
 	Model liblinearModel;
 
-	private static boolean flag_predict_probability = false;
-
 	public double[] classify(Document document) throws Exception {
-		int nr_class = liblinearModel.getNrClass();
-		double[] prob_estimates = new double[nr_class];
-		int n;
-		int nr_feature = liblinearModel.getNrFeature();
-		if (liblinearModel.getBias() >= 0)
-			n = nr_feature + 1;
-		else
-			n = nr_feature;
 
-		int[] labels = liblinearModel.getLabels();
+		int nr_feature = liblinearModel.getNrFeature();
 
 		// convert docs into liblinear format
 
@@ -49,23 +39,22 @@ public class LibLinearClassifier extends TextClassifier {
 		}
 
 		if (liblinearModel.getBias() >= 0) {
-			FeatureNode node = new FeatureNode(n, liblinearModel.getBias());
+			FeatureNode node = new FeatureNode(nr_feature + 1,
+					liblinearModel.getBias());
 			x.add(node);
 		}
 
 		FeatureNode[] nodes = new FeatureNode[x.size()];
 		nodes = x.toArray(nodes);
 
-		if (flag_predict_probability) {
+		if (liblinearModel.isProbabilityModel()) {
+			double[] prob_estimates = new double[liblinearModel.getNrClass()];
 			Linear.predictProbability(liblinearModel, nodes, prob_estimates);
 			return prob_estimates;
 		}
+
 		double[] dec_values = new double[liblinearModel.getNrClass()];
-		int predict_label = Linear.predictValues(liblinearModel, nodes,
-				dec_values);
-		// if (prob_estimates.length <= predict_label) prob_estimates = new
-		// double[prob_estimates.length + 1];
-		// prob_estimates[predict_label] = 1d;
+		Linear.predictValues(liblinearModel, nodes, dec_values);
 		return dec_values;
 	}
 

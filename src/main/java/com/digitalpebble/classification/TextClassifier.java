@@ -150,7 +150,7 @@ public abstract class TextClassifier {
 		int best = 0;
 		double bestScore = 0d;
 		for (int d = 0; d < scores.length; d++) {
-			if (scores[d] > bestScore) {
+			if (scores[d] >= bestScore) {
 				bestScore = scores[d];
 				best = d;
 			}

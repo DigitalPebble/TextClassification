@@ -97,6 +97,10 @@ public class LibLinearApplier extends TextClassifier {
 				.toArray(new String[commandList.size()]);
 		
 		process = Runtime.getRuntime().exec(commandArray);
+		
+		int value = process.waitFor();
+		if (value != 0)
+			throw new IOException("Process unsuccessful");
 		// Read labels from output file
 		BufferedReader in = new BufferedReader(new FileReader(output));
 		String line = null;
@@ -109,10 +113,6 @@ public class LibLinearApplier extends TextClassifier {
 			docNum++;
 		}
 		in.close();
-		
-		int value = process.waitFor();
-		if (value != 0)
-			throw new IOException("Process unsuccessful");
 	}
 
 	private String getParameters() {

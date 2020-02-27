@@ -89,14 +89,14 @@ public class LibLinearModelCreator extends Learner {
 		String[] commandArray = (String[]) commandList
 				.toArray(new String[commandList.size()]);
 		process = Runtime.getRuntime().exec(commandArray);
+		int value = process.waitFor();
+		if (value != 0)
+			throw new IOException("Process unsuccessful");
 		// Read output:
 		BufferedReader in = new BufferedReader(new InputStreamReader(process
 				.getInputStream()));
 		this.outputLearner = Utils.readOutput(in);
 		in.close();
-		int value = process.waitFor();
-		if (value != 0)
-			throw new IOException("Process unsuccessful");
 	}
 
 	protected boolean supportsMultiLabels() {

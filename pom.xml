@@ -42,8 +42,8 @@
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
+					<source>1.8</source>
+					<target>1.8</target>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -113,13 +113,13 @@
 		<dependency>
 			<groupId>de.bwaldvogel</groupId>
 			<artifactId>liblinear</artifactId>
-			<version>1.95</version>
+			<version>2.30</version>
 		</dependency>
 
 		<dependency>
 			<groupId>tw.edu.ntu.csie</groupId>
 			<artifactId>libsvm</artifactId>
-			<version>3.1</version>
+			<version>3.24</version>
 		</dependency>
 
 		<dependency>

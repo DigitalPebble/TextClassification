@@ -29,16 +29,18 @@ import com.digitalpebble.classification.Parameters;
 import com.digitalpebble.classification.TextClassifier;
 import com.digitalpebble.classification.libsvm.Utils;
 
+import de.bwaldvogel.liblinear.Predict;
+
 public class LibLinearApplier extends TextClassifier {
 
 	URL model;
 	
 	private String parameters = null;
 
-	private String classifier_filename = "liblinear_predict";	
+	private String classifier_filename;	
 	
 	public LibLinearApplier (){
-		classifier_filename =  System.getProperty("liblinear_predict","./liblinear_predict");
+		classifier_filename = System.getProperty("liblinear_predict");
 	}
 	
 	protected void loadModel() throws Exception {
@@ -81,7 +83,8 @@ public class LibLinearApplier extends TextClassifier {
 		List<String> commandList = new ArrayList<String> ();
 		File modelFile = new File(model.getFile());
 		Process process = null;
-		commandList.add(this.classifier_filename);
+		if (classifier_filename != null)
+			commandList.add(classifier_filename);
 		if (this.getParameters() != null) {
 			String[] parameters = this.getParameters().split(" ");
 			for (int par = 0; par < parameters.length; par++) {
@@ -93,26 +96,30 @@ public class LibLinearApplier extends TextClassifier {
 		commandList.add(output.getAbsolutePath());
 		
 		// build the command array to pass to exec()
-		String[] commandArray = (String[]) commandList
+		String[] commandArray = commandList
 				.toArray(new String[commandList.size()]);
 		
-		process = Runtime.getRuntime().exec(commandArray);
-		
-		int value = process.waitFor();
-		if (value != 0)
-			throw new IOException("Process unsuccessful");
-		// Read labels from output file
-		BufferedReader in = new BufferedReader(new FileReader(output));
-		String line = null;
-		int docNum = 0;
-		while ((line=in.readLine())!=null){
-			// line contains only the label
-			int label = Integer.parseInt(line);
-			// set the prediction
-			predictions[docNum][label]=1.0f;
-			docNum++;
+		if (classifier_filename == null) {
+			Predict.main(commandArray);
+		} else {
+			process = Runtime.getRuntime().exec(commandArray);
+			
+			int value = process.waitFor();
+			if (value != 0)
+				throw new IOException("Process unsuccessful");
 		}
-		in.close();
+		// Read labels from output file
+		try (BufferedReader in = new BufferedReader(new FileReader(output))) {
+			String line = null;
+			int docNum = 0;
+			while ((line=in.readLine())!=null){
+				// line contains only the label
+				int label = (int) Float.parseFloat(line);
+				// set the prediction
+				predictions[docNum][label]=1.0f;
+				docNum++;
+			}
+		}
 	}
 
 	private String getParameters() {

@@ -94,14 +94,14 @@ public class LibLinearModelCreator extends Learner {
 			Train.main(commandArray);
 		} else {
 			process = Runtime.getRuntime().exec(commandArray);
-			int value = process.waitFor();
-			if (value != 0)
-				throw new IOException("Process unsuccessful");
 			// Read output:
 			try (BufferedReader in = new BufferedReader(new InputStreamReader(process
 					.getInputStream()))) {
 				this.outputLearner = Utils.readOutput(in);
 			}
+			int value = process.waitFor();
+			if (value != 0)
+				throw new IOException("Process unsuccessful");
 		}
 	}
 

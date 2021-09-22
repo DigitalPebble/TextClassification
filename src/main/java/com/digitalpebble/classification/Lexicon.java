@@ -303,7 +303,11 @@ public class Lexicon {
 				.readLine());
 		this.normalizeVector = Boolean.parseBoolean(reader.readLine());
 		this.classifierType = reader.readLine();
-		this.labels = Arrays.asList(reader.readLine().split(" "));
+		this.labels = new ArrayList<String>();
+		// Need -1 to handle the case where the last label is zero length
+		this.labels.addAll(Arrays.asList(reader.readLine().split(" ", -1)));
+		// Remove the extra entry created by the terminating space
+		this.labels.remove(labels.size() - 1);
 		String[] tmp = reader.readLine().split(" ");
 		for (String f : tmp) {
 			// see if there is a custom weight for it
